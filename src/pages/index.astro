@@ -52,7 +52,7 @@ try {
       name: row._1?.trim() || '',
       price: row._3?.trim() || '',
       note: row._4?.trim() || undefined,
-      image: undefined, // Add image column mapping when available
+      image: `${import.meta.env.BASE_URL}images/${row[''].trim()}.jpeg`,
     }))
     .slice(1);
 } catch (error) {
@@ -83,15 +83,14 @@ try {
           <div class="product-grid">
             {products.map((product) => (
               <article class="product-card">
-                {/* Product image (only rendered if URL is present) */}
-                {product.image && (
-                  <img
-                    src={product.image}
-                    alt={product.name}
-                    class="product-image"
-                    loading="lazy"
-                  />
-                )}
+                {/* Product image with fallback */}
+                <img
+                  src={product.image}
+                  alt={product.name}
+                  class="product-image"
+                  loading="lazy"
+                  onerror={`this.onerror=null; this.src='${import.meta.env.BASE_URL}images/default.svg'`}
+                />
 
                 <div class="product-info">
                   {/* Product name */}
