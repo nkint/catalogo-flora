@@ -1,17 +1,244 @@
 ---
+/**
+ * Product Catalog Page
+ * Fetches product data from a public Google Sheet and renders a responsive grid of product cards.
+ */
 
+import Papa from 'papaparse';
+
+// TypeScript interface representing a single product row from the spreadsheet
+interface Product {
+  code: string;
+  name: string;
+  price: string;
+  note?: string;
+  image?: string;
+}
+
+// Raw row structure from the Google Sheet (auto-generated headers since sheet has no header row)
+interface RawRow {
+  '': string; // Column 0: Code
+  _1: string; // Column 1: Name
+  _2: string; // Column 2: Format/Size
+  _3: string; // Column 3: Price
+  _4: string; // Column 4: Note
+  [key: string]: string | undefined; // Additional columns
+}
+
+const SHEET_ID = '1RRzln9ZGcdlhCPaUUqRskGJVRoWSIyWLKI_cCbCkUos';
+
+// Construct the CSV export URL for the Google Sheet
+const SHEET_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv`;
+
+// Fetch the CSV data from Google Sheets
+let products: Product[] = [];
+
+try {
+  const response = await fetch(SHEET_URL);
+  const csvText = await response.text();
+
+  // Parse the CSV text into an array of raw row objects
+  const parseResult = Papa.parse<RawRow>(csvText, {
+    header: true, // First row treated as headers
+    skipEmptyLines: true, // Ignore completely empty rows
+  });
+
+  // Transform raw rows into Product objects, filtering out empty entries
+  products = parseResult.data
+    .slice(1) // Skip the first row (header row in the data)
+    .filter((row) => row['']?.trim() && row._1?.trim()) // Keep only rows with Code AND Name
+    .map((row) => ({
+      code: row[''].trim(),
+      name: row._1?.trim() || '',
+      price: row._3?.trim() || '',
+      note: row._4?.trim() || undefined,
+      image: undefined, // Add image column mapping when available
+    }))
+    .slice(1);
+} catch (error) {
+  console.error('Failed to fetch or parse product data:', error);
+}
 ---
 
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<link rel="icon" href="/favicon.ico" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro</title>
-	</head>
-	<body>
-		<h1>Astro</h1>
-	</body>
+<html lang="it">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" href="/favicon.ico" />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="generator" content={Astro.generator} />
+    <title>Catalogo Flora</title>
+  </head>
+
+  <body>
+    <header>
+      <h1>Catalogo Flora</h1>
+    </header>
+
+    <main>
+      {
+        products.length === 0 ? (
+          <p class="empty-message">Nessun prodotto disponibile.</p>
+        ) : (
+          <div class="product-grid">
+            {products.map((product) => (
+              <article class="product-card">
+                {/* Product image (only rendered if URL is present) */}
+                {product.image && (
+                  <img
+                    src={product.image}
+                    alt={product.name}
+                    class="product-image"
+                    loading="lazy"
+                  />
+                )}
+
+                <div class="product-info">
+                  {/* Product name */}
+                  <h2 class="product-name">{product.name}</h2>
+
+                  {/* Product code */}
+                  <p class="product-code">Codice: {product.code}</p>
+
+                  {/* Product price */}
+                  <p class="product-price">{product.price}</p>
+
+                  {/* Product notes (only rendered if present) */}
+                  {product.note && <p class="product-note">{product.note}</p>}
+                </div>
+              </article>
+            ))}
+          </div>
+        )
+      }
+    </main>
+  </body>
 </html>
+
+<style>
+  /* Base styles */
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  body {
+    font-family:
+      system-ui,
+      -apple-system,
+      sans-serif;
+    background-color: #f5f5f5;
+    color: #333;
+    line-height: 1.6;
+  }
+
+  /* Header styles */
+  header {
+    background-color: #2c3e50;
+    color: white;
+    padding: 2rem;
+    text-align: center;
+  }
+
+  header h1 {
+    font-size: 2rem;
+    font-weight: 600;
+  }
+
+  /* Main content area */
+  main {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+  }
+
+  /* Empty state message */
+  .empty-message {
+    text-align: center;
+    color: #666;
+    font-size: 1.2rem;
+    padding: 3rem;
+  }
+
+  /* Responsive product grid */
+  .product-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.5rem;
+  }
+
+  /* Individual product card */
+  .product-card {
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    transition: transform 0.2s ease;
+  }
+
+  .product-card:hover {
+    transform: translateY(-4px);
+  }
+
+  /* Product image */
+  .product-image {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+  }
+
+  /* Product information container */
+  .product-info {
+    padding: 1rem;
+  }
+
+  /* Product name */
+  .product-name {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    color: #2c3e50;
+  }
+
+  /* Product code */
+  .product-code {
+    font-size: 0.875rem;
+    color: #666;
+    margin-bottom: 0.5rem;
+  }
+
+  /* Product price */
+  .product-price {
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: #27ae60;
+    margin-bottom: 0.5rem;
+  }
+
+  /* Product notes */
+  .product-note {
+    font-size: 0.875rem;
+    color: #777;
+    font-style: italic;
+  }
+
+  /* Responsive adjustments for smaller screens */
+  @media (max-width: 600px) {
+    header {
+      padding: 1.5rem 1rem;
+    }
+
+    header h1 {
+      font-size: 1.5rem;
+    }
+
+    main {
+      padding: 1rem;
+    }
+
+    .product-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
