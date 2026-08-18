@@ -107,7 +107,7 @@ export async function fetchProducts(
         name: row._1?.trim() || '',
         price: row._3?.trim() || '',
         note: row._4?.trim() || undefined,
-        image: `${baseUrl}images/${row[''].trim()}.jpeg`,
+        image: `${baseUrl}/images/${row[''].trim()}.jpeg`,
         dimension: row._2?.trim() || undefined,
         numPack: row._5?.trim() || undefined,
         numPlane: row._6?.trim() || undefined,

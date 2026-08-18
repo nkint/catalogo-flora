@@ -15,7 +15,7 @@ const { product, baseUrl } = Astro.props;
     alt={product.name}
     class="product-image"
     loading="lazy"
-    onerror={`this.onerror=null; this.src='${baseUrl}images/default.svg'`}
+    onerror={`this.onerror=null; this.src='${baseUrl}/images/default.svg'`}
   />
 
   <div class="product-info">
@@ -58,7 +58,7 @@ const { product, baseUrl } = Astro.props;
     data-raw={JSON.stringify(product.raw)}
     aria-label={`Dettagli di ${product.name}`}
   >
-    <img src={`${baseUrl}code-icon.svg`} alt="Info" class="info-icon" />
+    <img src={`${baseUrl}/code-icon.svg`} alt="Info" class="info-icon" />
   </button>
 </article>
 
