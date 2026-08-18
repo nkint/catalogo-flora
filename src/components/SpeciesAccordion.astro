@@ -1,0 +1,77 @@
+---
+import type { Product } from '../lib/products';
+import ProductRow from './ProductRow.astro';
+
+interface Props {
+  speciesCode: string;
+  products: Product[];
+  baseUrl: string;
+}
+
+const { speciesCode, products, baseUrl } = Astro.props;
+---
+
+<details class="species-group" open>
+  <summary class="species-header">
+    <span class="species-name">{speciesCode.toUpperCase()}</span>
+    <span class="species-count">({products.length})</span>
+  </summary>
+  <div class="product-list">
+    {
+      products.map((product) => (
+        <ProductRow product={product} baseUrl={baseUrl} />
+      ))
+    }
+  </div>
+</details>
+
+<style>
+  .species-group {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+  }
+
+  .species-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 1rem 1.5rem;
+    background: #2c3e50;
+    color: white;
+    cursor: pointer;
+    font-weight: 600;
+    list-style: none;
+  }
+
+  .species-header::-webkit-details-marker {
+    display: none;
+  }
+
+  .species-header::before {
+    content: '▶';
+    font-size: 0.75rem;
+    transition: transform 0.2s;
+  }
+
+  .species-group[open] .species-header::before {
+    transform: rotate(90deg);
+  }
+
+  .species-name {
+    font-size: 1.1rem;
+  }
+
+  .species-count {
+    font-size: 0.85rem;
+    opacity: 0.8;
+    font-weight: 400;
+  }
+
+  .product-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+</style>

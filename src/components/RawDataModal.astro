@@ -1,0 +1,85 @@
+---
+// No props needed - modal is controlled via JavaScript
+---
+
+<dialog id="raw-modal" class="modal">
+  <div class="modal-content">
+    <button class="modal-close" aria-label="Chiudi">&times;</button>
+    <h3 class="modal-title">Dati Raw</h3>
+    <pre id="modal-data" class="modal-data"></pre>
+  </div>
+</dialog>
+
+<script>
+  const modal = document.getElementById('raw-modal') as HTMLDialogElement;
+  const modalData = document.getElementById('modal-data')!;
+  const closeButton = modal.querySelector('.modal-close')!;
+
+  // Open modal when info button is clicked
+  document.querySelectorAll('.info-button').forEach((button) => {
+    button.addEventListener('click', () => {
+      const raw = JSON.parse(button.getAttribute('data-raw') || '{}');
+      modalData.textContent = JSON.stringify(raw, null, 2);
+      modal.showModal();
+    });
+  });
+
+  // Close modal
+  closeButton.addEventListener('click', () => modal.close());
+  modal.addEventListener('click', (e) => {
+    if (e.target === modal) modal.close();
+  });
+</script>
+
+<style>
+  .modal {
+    border: none;
+    border-radius: 12px;
+    padding: 0;
+    max-width: 600px;
+    width: 90%;
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.2);
+  }
+
+  .modal::backdrop {
+    background: rgba(0, 0, 0, 0.5);
+  }
+
+  .modal-content {
+    padding: 1.5rem;
+    position: relative;
+  }
+
+  .modal-close {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.75rem;
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: #666;
+  }
+
+  .modal-close:hover {
+    color: #333;
+  }
+
+  .modal-title {
+    margin: 0 0 1rem 0;
+    color: #2c3e50;
+  }
+
+  .modal-data {
+    background: #1e1e1e;
+    color: #d4d4d4;
+    padding: 1rem;
+    border-radius: 8px;
+    overflow-x: auto;
+    font-size: 0.8rem;
+    line-height: 1.5;
+    font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+    white-space: pre;
+    margin: 0;
+  }
+</style>

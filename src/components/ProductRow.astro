@@ -1,0 +1,184 @@
+---
+import type { Product } from '../lib/products';
+
+interface Props {
+  product: Product;
+  baseUrl: string;
+}
+
+const { product, baseUrl } = Astro.props;
+---
+
+<article class="product-row">
+  <img
+    src={product.image}
+    alt={product.name}
+    class="product-image"
+    loading="lazy"
+    onerror={`this.onerror=null; this.src='${baseUrl}images/default.svg'`}
+  />
+
+  <div class="product-info">
+    <h2 class="product-name">{product.name}</h2>
+    <p class="product-code">Codice: {product.code}</p>
+
+    <div class="product-details">
+      {
+        product.dimension && (
+          <span class="product-detail">
+            Dimensione vaso: {product.dimension} cm
+          </span>
+        )
+      }
+      {
+        product.numPack && (
+          <span class="product-detail">
+            Numero per cassa: {product.numPack}
+          </span>
+        )
+      }
+      {
+        product.numPlane && (
+          <span class="product-detail">
+            Numero per piano: {product.numPlane}
+          </span>
+        )
+      }
+      {product.daGiardino && <span class="product-tag">Da giardino</span>}
+      {product.daGarden && <span class="product-tag">Da garden</span>}
+    </div>
+
+    {product.note && <p class="product-note">{product.note}</p>}
+  </div>
+
+  <p class="product-price">{product.price}</p>
+
+  <button
+    class="info-button"
+    data-raw={JSON.stringify(product.raw)}
+    aria-label={`Dettagli di ${product.name}`}
+  >
+    <img src={`${baseUrl}code-icon.svg`} alt="Info" class="info-icon" />
+  </button>
+</article>
+
+<style>
+  .product-row {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    background: white;
+    padding: 1rem 1.5rem;
+    transition: background-color 0.2s ease;
+    border-bottom: 1px solid #eee;
+  }
+
+  .product-row:last-child {
+    border-bottom: none;
+  }
+
+  .product-row:hover {
+    background-color: #f8f9fa;
+  }
+
+  .product-image {
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+    border-radius: 8px;
+    flex-shrink: 0;
+  }
+
+  .product-info {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .product-name {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin: 0 0 0.25rem 0;
+    color: #2c3e50;
+  }
+
+  .product-code {
+    font-size: 0.8rem;
+    color: #666;
+    margin: 0 0 0.25rem 0;
+  }
+
+  .product-price {
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: #27ae60;
+    flex-shrink: 0;
+    margin: 0;
+  }
+
+  .product-note {
+    font-size: 0.8rem;
+    color: #777;
+    font-style: italic;
+    margin: 0;
+  }
+
+  .product-details {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 1rem;
+    margin: 0.5rem 0;
+  }
+
+  .product-detail {
+    font-size: 0.8rem;
+    color: #555;
+    background: #f0f0f0;
+    padding: 0.2rem 0.5rem;
+    border-radius: 4px;
+  }
+
+  .product-tag {
+    font-size: 0.75rem;
+    color: white;
+    background: #27ae60;
+    padding: 0.2rem 0.5rem;
+    border-radius: 4px;
+    font-weight: 500;
+  }
+
+  .info-button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0.5rem;
+    opacity: 0.6;
+    transition: opacity 0.2s;
+    flex-shrink: 0;
+  }
+
+  .info-button:hover {
+    opacity: 1;
+  }
+
+  .info-icon {
+    width: 24px;
+    height: 24px;
+  }
+
+  @media (max-width: 600px) {
+    .product-row {
+      flex-wrap: wrap;
+    }
+
+    .product-image {
+      width: 60px;
+      height: 60px;
+    }
+
+    .product-price {
+      width: 100%;
+      text-align: right;
+      margin-top: 0.5rem;
+    }
+  }
+</style>

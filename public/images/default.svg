@@ -1,9 +1,23 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="400" height="300" viewBox="0 0 400 300">
-  <rect width="400" height="300" fill="#e8e8e8"/>
-  <g fill="#999">
-    <circle cx="200" cy="120" r="40"/>
-    <ellipse cx="200" cy="220" rx="70" ry="50"/>
-    <path d="M160 180 Q200 160 240 180" stroke="#999" stroke-width="3" fill="none"/>
-  </g>
-  <text x="200" y="280" text-anchor="middle" font-family="system-ui, sans-serif" font-size="14" fill="#666">Immagine non disponibile</text>
+  <rect width="400" height="300" fill="#f5f5f5"/>
+  
+  <!-- Stem -->
+  <path d="M200 280 Q200 200 200 160" stroke="#666" stroke-width="4" fill="none"/>
+  
+  <!-- Leaves -->
+  <ellipse cx="185" cy="220" rx="20" ry="10" fill="#888" transform="rotate(-30 185 220)"/>
+  <ellipse cx="215" cy="240" rx="20" ry="10" fill="#888" transform="rotate(30 215 240)"/>
+  
+  <!-- Flower petals -->
+  <ellipse cx="200" cy="110" rx="18" ry="35" fill="#ddd"  stroke-width="1"/>
+  <ellipse cx="200" cy="110" rx="18" ry="35" fill="#ddd"  stroke-width="1" transform="rotate(72 200 130)"/>
+  <ellipse cx="200" cy="110" rx="18" ry="35" fill="#ddd"  stroke-width="1" transform="rotate(144 200 130)"/>
+  <ellipse cx="200" cy="110" rx="18" ry="35" fill="#ddd"  stroke-width="1" transform="rotate(216 200 130)"/>
+  <ellipse cx="200" cy="110" rx="18" ry="35" fill="#ddd"  stroke-width="1" transform="rotate(288 200 130)"/>
+  
+  <!-- Flower center -->
+  <circle cx="200" cy="130" r="15" fill="#aaa"/>
+  
+  <!-- Text -->
+  <text x="200" y="280" text-anchor="middle" font-family="system-ui, sans-serif" font-size="12" fill="#888">Immagine non disponibile</text>
 </svg>
