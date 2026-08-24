@@ -16,6 +16,8 @@ const { product, baseUrl } = Astro.props;
     class="product-image"
     loading="lazy"
     onerror={`this.onerror=null; this.src='${baseUrl}/images/default.svg'`}
+    role="button"
+    tabindex="0"
   />
 
   <div class="product-info">
@@ -24,23 +26,19 @@ const { product, baseUrl } = Astro.props;
 
     <div class="product-details">
       {
-        product.dimension && (
-          <span class="product-detail">
-            Dimensione vaso: {product.dimension} cm
-          </span>
+        product.potSize && (
+          <span class="product-detail">Vaso: {product.potSize}</span>
         )
       }
       {
-        product.numPack && (
-          <span class="product-detail">
-            Numero per cassa: {product.numPack}
-          </span>
+        product.numPerBox && (
+          <span class="product-detail">N. per cassa: {product.numPerBox}</span>
         )
       }
       {
-        product.numPlane && (
+        product.numPerPlane && (
           <span class="product-detail">
-            Numero per piano: {product.numPlane}
+            N. per piano: {product.numPerPlane}
           </span>
         )
       }
@@ -51,7 +49,18 @@ const { product, baseUrl } = Astro.props;
     {product.note && <p class="product-note">{product.note}</p>}
   </div>
 
-  <p class="product-price">{product.price}</p>
+  <div class="product-prices">
+    {
+      product.pricePerPiece && (
+        <p class="product-price">{product.pricePerPiece} €/pz</p>
+      )
+    }
+    {
+      product.pricePerBox && (
+        <p class="product-price-box">{product.pricePerBox} €/cc</p>
+      )
+    }
+  </div>
 
   <button
     class="info-button"
@@ -87,6 +96,15 @@ const { product, baseUrl } = Astro.props;
     object-fit: cover;
     border-radius: 8px;
     flex-shrink: 0;
+    cursor: pointer;
+    transition:
+      transform 0.15s ease,
+      box-shadow 0.15s ease;
+  }
+
+  .product-image:hover {
+    transform: scale(1.05);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
   }
 
   .product-info {
@@ -107,11 +125,25 @@ const { product, baseUrl } = Astro.props;
     margin: 0 0 0.25rem 0;
   }
 
+  .product-prices {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    flex-shrink: 0;
+    gap: 0.25rem;
+  }
+
   .product-price {
     font-size: 1.125rem;
     font-weight: 700;
     color: #27ae60;
-    flex-shrink: 0;
+    margin: 0;
+  }
+
+  .product-price-box {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #2980b9;
     margin: 0;
   }
 
@@ -167,18 +199,86 @@ const { product, baseUrl } = Astro.props;
 
   @media (max-width: 600px) {
     .product-row {
-      flex-wrap: wrap;
+      display: grid;
+      grid-template-columns: 60px 1fr auto;
+      grid-template-rows: auto auto;
+      grid-template-areas:
+        'image info prices'
+        'image details details';
+      gap: 0.5rem 0.75rem;
+      padding: 0.75rem 1rem;
+      align-items: start;
     }
 
     .product-image {
+      grid-area: image;
       width: 60px;
       height: 60px;
     }
 
+    .product-info {
+      grid-area: info;
+    }
+
+    .product-name {
+      font-size: 1rem;
+      margin: 0;
+    }
+
+    .product-code {
+      font-size: 0.75rem;
+      margin: 0;
+    }
+
+    .product-details {
+      grid-area: details;
+      margin: 0;
+      gap: 0.35rem;
+    }
+
+    .product-detail {
+      font-size: 0.7rem;
+      padding: 0.15rem 0.4rem;
+      white-space: nowrap;
+    }
+
+    .product-tag {
+      font-size: 0.65rem;
+      padding: 0.15rem 0.4rem;
+    }
+
+    .product-prices {
+      grid-area: prices;
+      align-items: flex-end;
+    }
+
     .product-price {
-      width: 100%;
-      text-align: right;
-      margin-top: 0.5rem;
+      font-size: 1rem;
+    }
+
+    .product-price-box {
+      font-size: 0.8rem;
+    }
+
+    .info-button {
+      position: absolute;
+      top: 0.5rem;
+      right: 0.5rem;
+      padding: 0.25rem;
+    }
+
+    .info-icon {
+      width: 20px;
+      height: 20px;
+    }
+
+    .product-row {
+      position: relative;
+    }
+
+    .product-note {
+      font-size: 0.7rem;
+      margin-top: 0.25rem;
     }
   }
 </style>

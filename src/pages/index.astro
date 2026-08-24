@@ -7,9 +7,10 @@
 import Header from '../components/Header.astro';
 import SpeciesAccordion from '../components/SpeciesAccordion.astro';
 import RawDataModal from '../components/RawDataModal.astro';
+import ImageModal from '../components/ImageModal.astro';
 import { fetchProducts, type Product } from '../lib/products';
 
-const SHEET_ID = '1RRzln9ZGcdlhCPaUUqRskGJVRoWSIyWLKI_cCbCkUos';
+const SHEET_ID = '1Yk68VFgmELY-VCImW_rAPUNru7CuYq4m_buYLXUKn8Q';
 
 const products: Product[] = await fetchProducts(
   SHEET_ID,
@@ -71,6 +72,7 @@ const groupKeys = Object.keys(groupedProducts).sort();
     </main>
 
     <RawDataModal />
+    <ImageModal />
   </body>
 </html>
 
