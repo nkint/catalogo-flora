@@ -1,0 +1,481 @@
+---
+/**
+ * Admin Page
+ * Product catalog with photo upload functionality for mobile devices.
+ * Uploads images directly to GitHub repository via API.
+ */
+
+import Header from '../components/Header.astro';
+import { fetchProducts, type Product } from '../lib/products';
+
+// TODO: Replace with your GitHub username and repository name
+const GITHUB_OWNER = 'TUO_NOME_UTENTE';
+const GITHUB_REPO = 'TUO_NOME_REPO';
+
+const SHEET_ID = '1Yk68VFgmELY-VCImW_rAPUNru7CuYq4m_buYLXUKn8Q';
+
+const products: Product[] = await fetchProducts(
+  SHEET_ID,
+  import.meta.env.BASE_URL,
+);
+---
+
+<html lang="it">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" href="/favicon.ico" />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="generator" content={Astro.generator} />
+    <title>Admin - Catalogo Flora</title>
+  </head>
+
+  <body>
+    <Header title="Admin - Carica Foto" />
+
+    <main>
+      <div class="admin-header">
+        <p class="instructions">
+          Tocca "Scatta Foto" per caricare un'immagine dal telefono.
+        </p>
+        <button id="logoutBtn" type="button" class="logout-btn">
+          Cambia Token
+        </button>
+      </div>
+
+      {
+        products.length === 0 ? (
+          <p class="empty-message">Nessun prodotto disponibile.</p>
+        ) : (
+          <div class="product-grid">
+            {products.map((product) => (
+              <div class="product-card" data-code={product.code}>
+                <div class="product-info">
+                  <span class="product-code">{product.code}</span>
+                  <span class="product-name">{product.name}</span>
+                </div>
+                <div class="product-actions">
+                  <label class="photo-btn">
+                    <span class="btn-text">Scatta Foto</span>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      capture="environment"
+                      data-codice={product.code}
+                      class="file-input"
+                    />
+                  </label>
+                </div>
+              </div>
+            ))}
+          </div>
+        )
+      }
+    </main>
+
+    <!-- Pass config to client-side script -->
+    <script
+      id="config"
+      type="application/json"
+      set:html={JSON.stringify({ owner: GITHUB_OWNER, repo: GITHUB_REPO })}
+    />
+  </body>
+</html>
+
+<style>
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  body {
+    font-family:
+      system-ui,
+      -apple-system,
+      sans-serif;
+    background-color: #f5f5f5;
+    color: #333;
+    line-height: 1.6;
+  }
+
+  main {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 1.5rem;
+  }
+
+  .admin-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .instructions {
+    color: #666;
+    font-size: 0.95rem;
+  }
+
+  .logout-btn {
+    padding: 0.5rem 1rem;
+    font-size: 0.875rem;
+    color: #666;
+    background-color: #e5e5e5;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+  }
+
+  .logout-btn:hover {
+    background-color: #d5d5d5;
+  }
+
+  .empty-message {
+    text-align: center;
+    color: #666;
+    font-size: 1.2rem;
+    padding: 3rem;
+  }
+
+  .product-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .product-card {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: white;
+    border-radius: 10px;
+    padding: 1rem 1.25rem;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+    gap: 1rem;
+  }
+
+  .product-card.uploading {
+    opacity: 0.7;
+  }
+
+  .product-card.success {
+    border-left: 4px solid #4a8c3f;
+  }
+
+  .product-card.error {
+    border-left: 4px solid #c53030;
+  }
+
+  .product-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    min-width: 0;
+    flex: 1;
+  }
+
+  .product-code {
+    font-family: monospace;
+    font-size: 0.85rem;
+    color: #888;
+  }
+
+  .product-name {
+    font-weight: 500;
+    font-size: 1rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .product-actions {
+    flex-shrink: 0;
+  }
+
+  .photo-btn {
+    display: inline-block;
+    padding: 0.625rem 1rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: white;
+    background-color: #4a8c3f;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+  }
+
+  .photo-btn:hover {
+    background-color: #3d7434;
+  }
+
+  .photo-btn:active {
+    background-color: #2d5a27;
+  }
+
+  .photo-btn.uploading {
+    background-color: #888;
+    cursor: wait;
+  }
+
+  .photo-btn.success {
+    background-color: #2d7a2d;
+  }
+
+  .photo-btn.error {
+    background-color: #c53030;
+  }
+
+  .file-input {
+    display: none;
+  }
+
+  @media (max-width: 600px) {
+    main {
+      padding: 1rem;
+    }
+
+    .admin-header {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+
+    .product-card {
+      padding: 0.875rem 1rem;
+    }
+
+    .product-name {
+      font-size: 0.95rem;
+    }
+
+    .photo-btn {
+      padding: 0.5rem 0.875rem;
+      font-size: 0.8rem;
+    }
+  }
+</style>
+
+<script>
+  // Read configuration from server-rendered JSON
+  const configEl = document.getElementById('config');
+  const config = configEl ? JSON.parse(configEl.textContent || '{}') : {};
+  const GITHUB_OWNER = config.owner || 'TUO_NOME_UTENTE';
+  const GITHUB_REPO = config.repo || 'TUO_NOME_REPO';
+
+  // Check for token on page load
+  const token = localStorage.getItem('gh_token');
+  if (!token) {
+    window.location.href = '/password';
+  }
+
+  // Logout button
+  const logoutBtn = document.getElementById('logoutBtn');
+  logoutBtn?.addEventListener('click', () => {
+    localStorage.removeItem('gh_token');
+    window.location.href = '/password';
+  });
+
+  /**
+   * Resize image using canvas and return base64 string (without data URL prefix)
+   */
+  async function resizeImage(
+    file: File,
+    maxWidth: number = 800,
+  ): Promise<string> {
+    return new Promise((resolve, reject) => {
+      const img = new Image();
+      const reader = new FileReader();
+
+      reader.onload = (e) => {
+        img.src = e.target?.result as string;
+      };
+
+      reader.onerror = () => reject(new Error('Failed to read file'));
+
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        let { width, height } = img;
+
+        // Calculate new dimensions
+        if (width > maxWidth) {
+          height = (height * maxWidth) / width;
+          width = maxWidth;
+        }
+
+        canvas.width = width;
+        canvas.height = height;
+
+        const ctx = canvas.getContext('2d');
+        if (!ctx) {
+          reject(new Error('Failed to get canvas context'));
+          return;
+        }
+
+        ctx.drawImage(img, 0, 0, width, height);
+
+        // Get base64 without the data URL prefix
+        const dataUrl = canvas.toDataURL('image/jpeg', 0.85);
+        const base64 = dataUrl.replace(/^data:image\/jpeg;base64,/, '');
+        resolve(base64);
+      };
+
+      img.onerror = () => reject(new Error('Failed to load image'));
+
+      reader.readAsDataURL(file);
+    });
+  }
+
+  /**
+   * Check if file already exists in GitHub and get its SHA
+   */
+  async function getFileSha(
+    path: string,
+    token: string,
+  ): Promise<string | null> {
+    const url = `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${path}`;
+
+    try {
+      const response = await fetch(url, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          Accept: 'application/vnd.github.v3+json',
+        },
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        return data.sha;
+      }
+      return null;
+    } catch {
+      return null;
+    }
+  }
+
+  /**
+   * Upload image to GitHub repository
+   */
+  async function uploadToGitHub(
+    code: string,
+    base64Content: string,
+    token: string,
+  ): Promise<void> {
+    const path = `public/images/${code}.jpeg`;
+    const url = `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${path}`;
+
+    // Check if file exists to get SHA (required for updates)
+    const sha = await getFileSha(path, token);
+
+    const body: {
+      message: string;
+      content: string;
+      branch: string;
+      sha?: string;
+    } = {
+      message: `Upload image for ${code}`,
+      content: base64Content,
+      branch: 'main',
+    };
+
+    if (sha) {
+      body.sha = sha;
+    }
+
+    const response = await fetch(url, {
+      method: 'PUT',
+      headers: {
+        Authorization: `Bearer ${token}`,
+        Accept: 'application/vnd.github.v3+json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(body),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(errorData.message || `HTTP ${response.status}`);
+    }
+  }
+
+  // Handle file input changes
+  const fileInputs = document.querySelectorAll<HTMLInputElement>('.file-input');
+
+  fileInputs.forEach((input) => {
+    input.addEventListener('change', async (event) => {
+      const target = event.target as HTMLInputElement;
+      const file = target.files?.[0];
+      if (!file) return;
+
+      const code = target.dataset.codice;
+      if (!code) {
+        alert('Errore: codice prodotto non trovato');
+        return;
+      }
+
+      const token = localStorage.getItem('gh_token');
+      if (!token) {
+        window.location.href = '/password';
+        return;
+      }
+
+      // Find UI elements
+      const card = target.closest('.product-card') as HTMLElement;
+      const btnLabel = target.closest('.photo-btn') as HTMLLabelElement;
+      const btnText = btnLabel?.querySelector('.btn-text') as HTMLSpanElement;
+
+      // Update UI to show uploading state
+      const originalText = btnText?.textContent || 'Scatta Foto';
+      if (btnText) btnText.textContent = 'Caricamento...';
+      btnLabel?.classList.add('uploading');
+      card?.classList.add('uploading');
+      card?.classList.remove('success', 'error');
+
+      try {
+        // Resize and convert to base64
+        const base64 = await resizeImage(file, 800);
+
+        // Upload to GitHub
+        await uploadToGitHub(code, base64, token);
+
+        // Success feedback
+        if (btnText) btnText.textContent = 'Foto salvata!';
+        btnLabel?.classList.remove('uploading');
+        btnLabel?.classList.add('success');
+        card?.classList.remove('uploading');
+        card?.classList.add('success');
+
+        // Reset after delay
+        setTimeout(() => {
+          if (btnText) btnText.textContent = originalText;
+          btnLabel?.classList.remove('success');
+        }, 3000);
+      } catch (error) {
+        console.error('Upload failed:', error);
+
+        // Error feedback
+        if (btnText) btnText.textContent = 'Errore!';
+        btnLabel?.classList.remove('uploading');
+        btnLabel?.classList.add('error');
+        card?.classList.remove('uploading');
+        card?.classList.add('error');
+
+        const message =
+          error instanceof Error ? error.message : 'Errore sconosciuto';
+        alert(`Caricamento fallito: ${message}`);
+
+        // Reset after delay
+        setTimeout(() => {
+          if (btnText) btnText.textContent = originalText;
+          btnLabel?.classList.remove('error');
+          card?.classList.remove('error');
+        }, 3000);
+      }
+
+      // Clear the input so the same file can be selected again
+      target.value = '';
+    });
+  });
+</script>
