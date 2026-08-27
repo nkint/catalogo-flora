@@ -7,6 +7,7 @@
 
 import Header from '../components/Header.astro';
 import { fetchProducts, type Product } from '../lib/products';
+import { getGitInfo } from '../lib/git';
 
 // TODO: Replace with your GitHub username and repository name
 const GITHUB_OWNER = 'nkint';
@@ -20,6 +21,8 @@ const products: Product[] = await fetchProducts(
   SHEET_ID,
   import.meta.env.BASE_URL,
 );
+
+const gitInfo = getGitInfo();
 
 // Extract category prefix from code (first 2 letters)
 function getCategoryPrefix(code: string): string {
@@ -55,7 +58,11 @@ const sortedProducts = groupKeys.flatMap((key) => groupedProducts[key]);
   </head>
 
   <body>
-    <Header title="Admin - Carica Foto" />
+    <Header
+      title="Admin - Carica Foto"
+      lastUpdate={gitInfo.dateTime}
+      commitSha={gitInfo.sha}
+    />
 
     <main>
       <div class="admin-header">

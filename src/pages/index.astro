@@ -9,6 +9,7 @@ import SpeciesAccordion from '../components/SpeciesAccordion.astro';
 import RawDataModal from '../components/RawDataModal.astro';
 import ImageModal from '../components/ImageModal.astro';
 import { fetchProducts, type Product } from '../lib/products';
+import { getGitInfo } from '../lib/git';
 
 const SHEET_ID = '1Yk68VFgmELY-VCImW_rAPUNru7CuYq4m_buYLXUKn8Q';
 
@@ -16,6 +17,8 @@ const products: Product[] = await fetchProducts(
   SHEET_ID,
   import.meta.env.BASE_URL,
 );
+
+const gitInfo = getGitInfo();
 
 // Extract category prefix from code (first 2 letters)
 function getCategoryPrefix(code: string): string {
@@ -58,7 +61,7 @@ const groupKeys = Object.keys(groupedProducts).sort();
   </head>
 
   <body>
-    <Header title="Catalogo Flora" />
+    <Header title="Catalogo Flora" lastUpdate={gitInfo.date} />
 
     <main>
       {
