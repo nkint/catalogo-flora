@@ -61,14 +61,6 @@ const { product, baseUrl } = Astro.props;
       )
     }
   </div>
-
-  <button
-    class="info-button"
-    data-raw={JSON.stringify(product.raw)}
-    aria-label={`Dettagli di ${product.name}`}
-  >
-    <img src={`${baseUrl}/code-icon.svg`} alt="Info" class="info-icon" />
-  </button>
 </article>
 
 <style>
@@ -178,25 +170,6 @@ const { product, baseUrl } = Astro.props;
     font-weight: 500;
   }
 
-  .info-button {
-    background: none;
-    border: none;
-    cursor: pointer;
-    padding: 0.5rem;
-    opacity: 0.6;
-    transition: opacity 0.2s;
-    flex-shrink: 0;
-  }
-
-  .info-button:hover {
-    opacity: 1;
-  }
-
-  .info-icon {
-    width: 24px;
-    height: 24px;
-  }
-
   @media (max-width: 600px) {
     .product-row {
       display: grid;
@@ -258,22 +231,6 @@ const { product, baseUrl } = Astro.props;
 
     .product-price-box {
       font-size: 0.8rem;
-    }
-
-    .info-button {
-      position: absolute;
-      top: 0.5rem;
-      right: 0.5rem;
-      padding: 0.25rem;
-    }
-
-    .info-icon {
-      width: 20px;
-      height: 20px;
-    }
-
-    .product-row {
-      position: relative;
     }
 
     .product-note {

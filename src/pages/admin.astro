@@ -6,6 +6,7 @@
  */
 
 import Header from '../components/Header.astro';
+import RawDataModal from '../components/RawDataModal.astro';
 import { fetchProducts, type Product } from '../lib/products';
 import { getGitInfo } from '../lib/git';
 
@@ -66,6 +67,7 @@ const sortedProducts = groupKeys.flatMap((key) => groupedProducts[key]);
 
     <main>
       <div class="admin-header">
+        <a href={`${baseUrl}/`} class="catalog-link">← Vai al Catalogo</a>
         <p class="instructions">
           Tocca "Scatta Foto" per caricare un'immagine dal telefono.
         </p>
@@ -86,6 +88,17 @@ const sortedProducts = groupKeys.flatMap((key) => groupedProducts[key]);
                   <span class="product-name">{product.name}</span>
                 </div>
                 <div class="product-actions">
+                  <button
+                    class="info-button"
+                    data-raw={JSON.stringify(product.raw)}
+                    aria-label={`Dettagli di ${product.name}`}
+                  >
+                    <img
+                      src={`${baseUrl}/code-icon.svg`}
+                      alt="Info"
+                      class="info-icon"
+                    />
+                  </button>
                   <label class="photo-btn">
                     <span class="btn-text">Scatta Foto</span>
                     <input
@@ -103,6 +116,8 @@ const sortedProducts = groupKeys.flatMap((key) => groupedProducts[key]);
         )
       }
     </main>
+
+    <RawDataModal />
 
     <!-- Pass config to client-side script -->
     <script
@@ -166,6 +181,18 @@ const sortedProducts = groupKeys.flatMap((key) => groupedProducts[key]);
     margin-bottom: 1.5rem;
     gap: 1rem;
     flex-wrap: wrap;
+  }
+
+  .catalog-link {
+    color: #4a8c3f;
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 0.95rem;
+    width: 100%;
+  }
+
+  .catalog-link:hover {
+    text-decoration: underline;
   }
 
   .instructions {
@@ -247,7 +274,28 @@ const sortedProducts = groupKeys.flatMap((key) => groupedProducts[key]);
   }
 
   .product-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
     flex-shrink: 0;
+  }
+
+  .info-button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0.5rem;
+    opacity: 0.5;
+    transition: opacity 0.2s;
+  }
+
+  .info-button:hover {
+    opacity: 1;
+  }
+
+  .info-icon {
+    width: 20px;
+    height: 20px;
   }
 
   .photo-btn {

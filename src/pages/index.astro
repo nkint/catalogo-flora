@@ -6,7 +6,6 @@
 
 import Header from '../components/Header.astro';
 import SpeciesAccordion from '../components/SpeciesAccordion.astro';
-import RawDataModal from '../components/RawDataModal.astro';
 import ImageModal from '../components/ImageModal.astro';
 import { fetchProducts, type Product } from '../lib/products';
 import { getGitInfo } from '../lib/git';
@@ -82,7 +81,6 @@ const groupKeys = Object.keys(groupedProducts).sort();
       }
     </main>
 
-    <RawDataModal />
     <ImageModal />
   </body>
 </html>
