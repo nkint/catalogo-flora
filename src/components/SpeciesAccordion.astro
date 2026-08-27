@@ -4,16 +4,18 @@ import ProductRow from './ProductRow.astro';
 
 interface Props {
   speciesCode: string;
+  label?: string;
   products: Product[];
   baseUrl: string;
 }
 
-const { speciesCode, products, baseUrl } = Astro.props;
+const { speciesCode, label, products, baseUrl } = Astro.props;
+const displayName = label || speciesCode.toUpperCase();
 ---
 
 <details class="species-group" open>
   <summary class="species-header">
-    <span class="species-name">{speciesCode.toUpperCase()}</span>
+    <span class="species-name">{displayName}</span>
     <span class="species-count">({products.length})</span>
   </summary>
   <div class="product-list">

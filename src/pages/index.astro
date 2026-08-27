@@ -17,16 +17,23 @@ const products: Product[] = await fetchProducts(
   import.meta.env.BASE_URL,
 );
 
-// Extract species prefix from code (alphabetic part before numbers)
-function getSpeciesPrefix(code: string): string {
-  const match = code.match(/^[a-zA-Z]+/);
-  return match ? match[0].toLowerCase() : code;
+// Extract category prefix from code (first 2 letters)
+function getCategoryPrefix(code: string): string {
+  return code.slice(0, 2).toLowerCase();
 }
 
-// Group products by species prefix
+// Category labels mapping
+const CATEGORY_LABELS: Record<string, string> = {
+  gr: 'Graminacee',
+  pe: 'Perenni',
+  an: 'Annuali',
+  bi: 'Biennali',
+};
+
+// Group products by category prefix
 const groupedProducts = products.reduce(
   (acc, product) => {
-    const prefix = getSpeciesPrefix(product.code);
+    const prefix = getCategoryPrefix(product.code);
     if (!acc[prefix]) {
       acc[prefix] = [];
     }
@@ -62,6 +69,7 @@ const groupKeys = Object.keys(groupedProducts).sort();
             {groupKeys.map((prefix) => (
               <SpeciesAccordion
                 speciesCode={prefix}
+                label={CATEGORY_LABELS[prefix]}
                 products={groupedProducts[prefix]}
                 baseUrl={import.meta.env.BASE_URL}
               />
